@@ -3,159 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ЭлектроБезопасность 2 группа</title>
+    <title>Тестирование ГПК: Электробезопасность</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com" rel="stylesheet">
     <style>
-        .flash-red { animation: flash 0.3s; }
-        @keyframes flash { 0% { background: #450a0a; } 100% { background: #111827; } }
-        .btn-ans { transition: all 0.2s; border: 1px solid #374151; }
-        .btn-ans:active { transform: scale(0.95); }
+        body { font-family: 'Montserrat', sans-serif; background-color: #f4f7fa; color: #333; }
+        .gpk-blue { background-color: #0056b3; } 
+        .gpk-text-blue { color: #0056b3; }
+        .card-gpk { background: #ffffff; border-radius: 16px; border: 1px solid #e0e6ed; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        .ans-btn { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; transition: all 0.2s ease; width: 100%; text-align: left; padding: 1rem; font-size: 0.875rem; font-weight: 500; }
+        .ans-btn:hover { border-color: #0056b3; background: #ebf4ff; color: #0056b3; }
+        .input-gpk { border: 2px solid #e2e8f0; border-radius: 10px; padding: 12px; width: 100%; transition: border-color 0.3s; color: #1e293b; }
+        .input-gpk:focus { border-color: #0056b3; outline: none; }
+        .flash-red { animation: flash 0.4s ease-out; }
+        @keyframes flash { 0% { background: #fff; } 50% { background: #fee2e2; } 100% { background: #fff; } }
     </style>
 </head>
-<body id="body" class="bg-gray-900 text-white font-sans transition-colors duration-300">
+<body id="body" class="min-h-screen flex flex-col">
 
-    <audio id="snd-success" src="https://www.soundjay.com"></audio>
-    <audio id="snd-error" src="https://www.myinstants.com"></audio>
+    <audio id="snd-ok" src="https://www.soundjay.com"></audio>
+    <audio id="snd-err" src="https://www.myinstants.com"></audio>
 
-    <div id="app" class="max-w-md mx-auto p-4 min-h-screen flex flex-col">
-        <header class="text-center py-8">
-            <h1 class="text-3xl font-black text-yellow-500 tracking-tighter uppercase">Электрощит 3.0</h1>
-            <p class="text-gray-500 text-xs mt-1">Экзаменационный тренажер • 2 группа</p>
+    <div class="max-w-xl mx-auto w-full p-4 md:p-8 flex-grow flex flex-col">
+        <!-- HEADER -->
+        <header class="text-center mb-6">
+            <div class="inline-block p-2 bg-white rounded-lg shadow-sm mb-2">
+                <span class="text-2xl font-black gpk-text-blue">ГПК</span>
+            </div>
+            <h1 class="text-lg font-extrabold gpk-text-blue uppercase tracking-tight leading-tight">Глазовский политехнический колледж</h1>
         </header>
 
-        <!-- ГЛАВНОЕ МЕНЮ -->
-        <div id="menu" class="space-y-6 flex-grow flex flex-col justify-center">
-            <div class="bg-gray-800 p-5 rounded-2xl border border-gray-700 shadow-xl">
-                <h3 class="text-yellow-500 font-bold mb-2">Правила аттестации:</h3>
-                <ul class="text-sm text-gray-300 space-y-2">
-                    <li>• Будет предложено <span class="text-white font-bold">10 случайных</span> вопросов.</li>
-                    <li>• Проходной балл: <span class="text-green-400 font-bold">8 из 10</span>.</li>
-                    <li>• Время на раздумья не ограничено.</li>
-                </ul>
-            </div>
-            <button onclick="startQuiz()" class="w-full bg-yellow-500 text-black font-black p-6 rounded-2xl hover:bg-yellow-400 shadow-[0_0_20px_rgba(234,179,8,0.3)] uppercase text-xl">Начать тест</button>
-        </div>
-
-        <!-- ЭКРАН ТЕСТА -->
-        <div id="quiz" class="hidden flex-grow">
-            <div class="flex justify-between items-center mb-6">
-                <span class="text-gray-500 text-sm">Вопрос <span id="q-num" class="text-white font-mono text-lg">1</span> из 10</span>
-                <div class="h-2 w-32 bg-gray-800 rounded-full overflow-hidden">
-                    <div id="progress-bar" class="h-full bg-yellow-500 transition-all duration-300" style="width: 10%"></div>
+        <!-- ЭКРАН РЕГИСТРАЦИИ -->
+        <div id="auth" class="flex-grow flex flex-col justify-center">
+            <div class="card-gpk p-8 space-y-6">
+                <h2 class="text-xl font-bold text-center text-gray-800">Идентификация студента</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-xs font-bold text-gray-400 uppercase ml-1">ФИО полностью</label>
+                        <input type="text" id="student-name" class="input-gpk" placeholder="Иванов Иван Иванович">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-gray-400 uppercase ml-1">Группа</label>
+                        <input type="text" id="student-group" class="input-gpk" placeholder="Например: Э-21">
+                    </div>
                 </div>
+                <button onclick="startApp()" class="w-full gpk-blue text-white font-bold py-4 rounded-xl shadow-lg hover:opacity-90 transition transform active:scale-95">
+                    ПЕРЕЙТИ К ТЕСТУ
+                </button>
             </div>
-            
-            <div class="bg-gray-800 p-6 rounded-3xl border-2 border-gray-700 shadow-2xl mb-6">
-                <p id="question" class="text-xl font-bold leading-tight text-white mb-2"></p>
-            </div>
-
-            <div id="answers" class="space-y-3">
-                <!-- Кнопки ответов вставляются сюда -->
-            </div>
+            <p class="text-center text-[10px] text-gray-400 mt-6 uppercase tracking-widest italic">БПОУ УР «ГПК» • 2026</p>
         </div>
 
-        <!-- ЭКРАН РЕЗУЛЬТАТА -->
-        <div id="result" class="hidden text-center py-10 animate-bounce-in">
-            <div id="res-icon" class="text-8xl mb-4"></div>
-            <h2 id="res-title" class="text-4xl font-black mb-2"></h2>
-            <div id="res-score" class="text-6xl font-black text-yellow-500 mb-6">0/10</div>
-            <p id="res-desc" class="text-gray-400 mb-10 px-6"></p>
-            <button onclick="location.reload()" class="w-full bg-white text-black font-bold p-5 rounded-2xl hover:bg-gray-200 transition">Повторить попытку</button>
+        <!-- QUIZ -->
+        <div id="quiz" class="hidden flex-grow space-y-6">
+            <div class="flex justify-between items-end px-1">
+                <div>
+                    <p id="display-name" class="text-[10px] font-bold text-gray-400 italic mb-1"></p>
+                    <span id="category-name" class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Раздел</span>
+                </div>
+                <span class="text-xs font-bold text-gray-400">ВОПРОС <span id="progress-text" class="text-blue-600">1/10</span></span>
+            </div>
+            <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div id="bar" class="h-full gpk-blue rounded-full transition-all duration-500" style="width: 10%"></div>
+            </div>
+            <div class="card-gpk p-6 md:p-8 min-h-[140px] flex items-center">
+                <p id="q-text" class="text-lg font-semibold text-gray-800 leading-snug"></p>
+            </div>
+            <div id="ans-box" class="space-y-3 pb-8"></div>
+        </div>
+
+        <!-- RESULT -->
+        <div id="result" class="hidden text-center py-6">
+            <div class="card-gpk p-8 border-t-8 shadow-2xl" id="res-border">
+                <div id="res-icon" class="text-6xl mb-4"></div>
+                <h2 id="res-status" class="text-3xl font-black mb-2 uppercase italic tracking-tighter"></h2>
+                <div id="res-score" class="text-7xl font-black gpk-text-blue mb-4">0/10</div>
+                
+                <div class="border-t border-b border-gray-100 py-6 my-6 text-left space-y-3">
+                    <div>
+                        <p class="text-[10px] text-gray-400 uppercase font-bold">Студент ГПК:</p>
+                        <p id="final-name" class="font-bold text-gray-900 text-lg leading-tight"></p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-gray-400 uppercase font-bold">Группа:</p>
+                        <p id="final-group" class="text-gray-700 font-semibold"></p>
+                    </div>
+                    <div class="pt-4 flex justify-between items-center border-t border-gray-50 mt-2">
+                        <span class="text-[9px] text-gray-400 font-mono">ID: <span id="session-id" class="text-gray-600 font-bold"></span></span>
+                        <span class="text-[9px] text-gray-400 font-mono" id="current-date"></span>
+                    </div>
+                </div>
+                
+                <p id="res-msg" class="text-gray-500 text-sm mb-8 leading-relaxed"></p>
+                <button onclick="location.reload()" class="w-full bg-gray-100 text-gray-600 font-bold py-4 rounded-xl hover:bg-gray-200 transition uppercase text-xs tracking-widest">Новая попытка</button>
+            </div>
+            <p class="mt-6 text-[10px] text-gray-400 font-bold uppercase">Сделайте скриншот этого экрана для преподавателя</p>
         </div>
     </div>
 
     <script>
-        const database = [
-            {q:"Минимальная группа для работы с электроинструментом?", a:["1-я", "2-я", "3-я"], c:1},
-            {q:"Безопасное напряжение в особо опасных помещениях?", a:["12В", "50В", "220В"], c:0},
-            {q:"Радиус зоны шагового напряжения от точки касания?", a:["5 метров", "8 метров", "20 метров"], c:1},
-            {q:"Цветовая маркировка провода защитного заземления?", a:["Синий", "Черный", "Желто-зеленый"], c:2},
-            {q:"Как проверить диэлектрические перчатки перед работой?", a:["Скручиванием на герметичность", "Промывкой водой", "Растягиванием пальцев"], c:0},
-            {q:"Какая сила тока считается смертельно опасной для человека?", a:["10 мА", "50 мА", "100 мА"], c:2},
-            {q:"Первое действие при обнаружении человека под действием тока?", a:["Вызвать скорую", "Обесточить установку", "Начать делать ИВЛ"], c:1},
-            {q:"Способ выхода из зоны шагового напряжения?", a:["Бегом", "Гусиным шагом", "Обычным шагом"], c:1},
-            {q:"Кто имеет право давать распоряжение на работу?", a:["Мастер/Производитель", "Охранник предприятия", "Любой работник 2 группы"], c:0},
-            {q:"Разрешено ли работать с электроинструментом под дождем?", a:["Да", "Нет", "В диэлектрических ботах"], c:1},
-            {q:"Расчетное сопротивление тела человека в электробезопасности?", a:["100 Ом", "1000 Ом", "10000 Ом"], c:1},
-            {q:"Для чего предназначено УЗО?", a:["Защита от КЗ", "Защита от утечки тока на землю", "Учет энергии"], c:1},
-            {q:"Стандартная частота переменного тока в сетях РФ?", a:["50 Гц", "60 Гц", "100 Гц"], c:0},
-            {q:"К какому типу относится знак 'Не влезай! Убьет'?", a:["Запрещающий", "Предупреждающий", "Указательный"], c:1},
-            {q:"Минимальный возраст для присвоения 2-й группы?", a:["16 лет", "18 лет", "21 год"], c:1},
-            {q:"Имеет ли право работник 2 группы чинить розетки?", a:["Да", "Нет", "С разрешения мастера"], c:1},
-            {q:"Где должна располагаться кнопка 'Аварийный стоп'?", a:["В закрытом шкафу", "Под замком", "На видном и доступном месте"], c:2},
-            {q:"Чем тушить загоревшийся электрощит под напряжением?", a:["Водой", "Углекислотным огнетушителем", "Влажной тканью"], c:1},
-            {q:"Как часто проводится плановая проверка знаний (2 гр)?", a:["Раз в год", "Раз в 3 года", "Раз в полгода"], c:0},
-            {q:"Проверка ковриков перед использованием?", a:["В лаборатории", "Визуальный осмотр на проколы", "Проверка весом"], c:1}
-        ];
+        const categories = {
+            "НОРМАТИВНЫЕ АКТЫ": [
+                {q:"Минимальная группа для работы с электроинструментом?", a:["2-я группа", "1-я группа", "3-я группа"], c:0},
+                {q:"Смертельный ток для человека в цепи переменного тока?", a:["100 мА", "10 мА", "50 мА"], c:0}
+            ],
+            "ЭЛЕКТРОТЕХНИКА": [
+                {q:"Безопасное напряжение в особо опасных помещениях?", a:["12 В", "50 В", "220 В"], c:0},
+                {q:"Что такое УЗО согласно назначению?", a:["Защита от утечки тока", "Защита от КЗ", "Защита от молнии"], c:0}
+            ],
+            "ЗАЩИТНЫЕ МЕРЫ": [
+                {q:"Цвет жилы защитного заземления (PE)?", a:["Желто-зеленый", "Синий", "Черный"], c:0},
+                {q:"Радиус зоны шагового напряжения?", a:["8 метров", "3 метра", "20 метров"], c:0}
+            ],
+            "ПРАВИЛА ОХРАНЫ ТРУДА": [
+                {q:"Периодичность проверки электроинструмента?", a:["Раз в 6 месяцев", "Раз в год", "Раз в месяц"], c:0},
+                {q:"Минимальный возраст для присвоения 2-й группы?", a:["18 лет", "16 лет", "21 год"], c:0}
+            ],
+            "ПЕРВАЯ ПОМОЩЬ": [
+                {q:"Первое действие при спасении пострадавшего от тока?", a:["Обесточить установку", "Вызвать скорую", "Делать массаж сердца"], c:0},
+                {q:"Как выходить из зоны шагового напряжения?", a:["Гусиным шагом", "Прыжками", "Бегом"], c:0}
+            ]
+        };
 
-        // Дозаполнение до 100 вопросов (шаблоны)
-        for(let i=21; i<=100; i++) {
-            database.push({
-                q: `Экзаменационный вопрос №${i}: Тема безопасной эксплуатации электроустановок до 1000В.`,
-                a: ["Правильный технический ответ", "Вариант с ошибкой", "Недопустимое действие"],
-                c: 0
-            });
+        // Наполнение до 200 (по 40 в раздел)
+        Object.keys(categories).forEach(cat => {
+            while(categories[cat].length < 40) {
+                const num = categories[cat].length + 1;
+                categories[cat].push({
+                    q: `Вопрос [${cat}] №${num}: Тема электробезопасности до 1000В для студентов ГПК.`,
+                    a: ["Верный технический ответ", "Ошибочное действие", "Грубое нарушение ПТЭЭП"],
+                    c: 0
+                });
+            }
+        });
+
+        let testSet = [], currentIdx = 0, score = 0;
+        let studentData = { name: "", group: "" };
+
+        function startApp() {
+            const n = document.getElementById('student-name').value.trim();
+            const g = document.getElementById('student-group').value.trim();
+            if (n.length < 5 || g.length < 2) {
+                alert("Введите ФИО (минимум 2 слова) и группу!");
+                return;
+            }
+            studentData = { name: n, group: g };
+            document.getElementById('display-name').innerText = `${n} | ${g}`;
+            initQuiz();
         }
 
-        let sessionQs = [];
-        let currentIdx = 0;
-        let score = 0;
-
-        function startQuiz() {
-            sessionQs = database.sort(() => 0.5 - Math.random()).slice(0, 10);
-            currentIdx = 0; score = 0;
+        function initQuiz() {
+            testSet = [];
+            Object.keys(categories).forEach(cat => {
+                const shuf = categories[cat].sort(() => 0.5 - Math.random());
+                testSet.push(...shuf.slice(0, 2).map(x => ({...x, catName: cat})));
+            });
+            testSet.sort(() => 0.5 - Math.random());
             show('quiz');
-            loadQ();
+            render();
         }
 
-        function loadQ() {
-            const data = sessionQs[currentIdx];
-            document.getElementById('q-num').innerText = currentIdx + 1;
-            document.getElementById('progress-bar').style.width = ((currentIdx + 1) * 10) + '%';
-            document.getElementById('question').innerText = data.q;
-            
-            const box = document.getElementById('answers');
+        function render() {
+            const data = testSet[currentIdx];
+            document.getElementById('category-name').innerText = data.catName;
+            document.getElementById('progress-text').innerText = `${currentIdx + 1}/10`;
+            document.getElementById('bar').style.width = ((currentIdx + 1) * 10) + '%';
+            document.getElementById('q-text').innerText = data.q;
+            const box = document.getElementById('ans-box');
             box.innerHTML = '';
-            data.a.forEach((ans, i) => {
-                const btn = document.createElement('button');
-                btn.className = "btn-ans w-full text-left bg-gray-800 p-5 rounded-2xl hover:bg-gray-700 active:bg-gray-600";
-                btn.innerText = ans;
-                btn.onclick = () => check(i);
-                box.appendChild(btn);
+            // Перемешиваем ответы для каждого вопроса
+            const originalAnswers = [...data.a];
+            const correctAnswerText = originalAnswers[data.c];
+            const shuffledAnswers = originalAnswers.sort(() => 0.5 - Math.random());
+
+            shuffledAnswers.forEach((ans) => {
+                const b = document.createElement('button');
+                b.className = "ans-btn";
+                b.innerText = ans;
+                b.onclick = () => handle(ans === correctAnswerText);
+                box.appendChild(b);
             });
         }
 
-        function check(idx) {
-            const isCorrect = idx === sessionQs[currentIdx].c;
+        function handle(isCorrect) {
             if(isCorrect) {
                 score++;
-                document.getElementById('snd-success').play();
+                document.getElementById('snd-ok').play();
             } else {
-                document.getElementById('snd-error').play();
+                document.getElementById('snd-err').play();
                 document.getElementById('body').classList.add('flash-red');
-                setTimeout(() => document.getElementById('body').classList.remove('flash-red'), 300);
+                setTimeout(() => document.getElementById('body').classList.remove('flash-red'), 400);
             }
-
             currentIdx++;
-            setTimeout(() => {
-                if(currentIdx < 10) loadQ(); else finish();
-            }, 400);
+            setTimeout(() => { if(currentIdx < 10) render(); else finish(); }, 400);
         }
 
         function finish() {
             show('result');
             const win = score >= 8;
             document.getElementById('res-score').innerText = `${score}/10`;
-            document.getElementById('res-icon').innerText = win ? "🏆" : "❌";
-            document.getElementById('res-title').innerText = win ? "ЗАЧЕТ!" : "НЕ СДАНО";
-            document.getElementById('res-title').className = win ? "text-4xl font-black mb-2 text-green-500" : "text-4xl font-black mb-2 text-red-500";
-            document.getElementById('res-desc').innerText = win 
-                ? "Поздравляем! Вы подтвердили квалификацию на 2-ю группу по электробезопасности." 
-                : "К сожалению, вы допустили слишком много ошибок. Повторите ПТЭЭП и попробуйте снова.";
+            document.getElementById('res-icon').innerText = win ? "🎓" : "⚠️";
+            document.getElementById('res-status').innerText = win ? "СДАНО" : "НЕ СДАНО";
+            document.getElementById('res-status').className = `text-4xl font-black italic tracking-tighter ${win ? 'text-green-600' : 'text-red-600'}`;
+            document.getElementById('res-border').style.borderTopColor = win ? '#16a34a' : '#dc2626';
+            
+            document.getElementById('final-name').innerText = studentData.name;
+            document.getElementById('final-group').innerText = studentData.group;
+            document.getElementById('session-id').innerText = Math.random().toString(36).substring(2, 10).toUpperCase();
+            document.getElementById('current-date').innerText = new Date().toLocaleString();
+            
+            document.getElementById('res-msg').innerText = win 
+                ? "Аттестация пройдена успешно. Вы подтвердили знания 2-й группы по электробезопасности." 
+                : "Количество баллов недостаточно для аттестации. Повторите материал и попробуйте снова.";
         }
 
         function show(id) {
-            ['menu', 'quiz', 'result'].forEach(s => document.getElementById(s).classList.add('hidden'));
+            ['auth', 'quiz', 'result'].forEach(s => document.getElementById(s).classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
         }
     </script>
