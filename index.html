@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ЭлектроБезопасность 2 группа</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .flash-red { animation: flash 0.3s; }
+        @keyframes flash { 0% { background: #450a0a; } 100% { background: #111827; } }
+        .btn-ans { transition: all 0.2s; border: 1px solid #374151; }
+        .btn-ans:active { transform: scale(0.95); }
+    </style>
+</head>
+<body id="body" class="bg-gray-900 text-white font-sans transition-colors duration-300">
+
+    <audio id="snd-success" src="https://www.soundjay.com"></audio>
+    <audio id="snd-error" src="https://www.myinstants.com"></audio>
+
+    <div id="app" class="max-w-md mx-auto p-4 min-h-screen flex flex-col">
+        <header class="text-center py-8">
+            <h1 class="text-3xl font-black text-yellow-500 tracking-tighter uppercase">Электрощит 3.0</h1>
+            <p class="text-gray-500 text-xs mt-1">Экзаменационный тренажер • 2 группа</p>
+        </header>
+
+        <!-- ГЛАВНОЕ МЕНЮ -->
+        <div id="menu" class="space-y-6 flex-grow flex flex-col justify-center">
+            <div class="bg-gray-800 p-5 rounded-2xl border border-gray-700 shadow-xl">
+                <h3 class="text-yellow-500 font-bold mb-2">Правила аттестации:</h3>
+                <ul class="text-sm text-gray-300 space-y-2">
+                    <li>• Будет предложено <span class="text-white font-bold">10 случайных</span> вопросов.</li>
+                    <li>• Проходной балл: <span class="text-green-400 font-bold">8 из 10</span>.</li>
+                    <li>• Время на раздумья не ограничено.</li>
+                </ul>
+            </div>
+            <button onclick="startQuiz()" class="w-full bg-yellow-500 text-black font-black p-6 rounded-2xl hover:bg-yellow-400 shadow-[0_0_20px_rgba(234,179,8,0.3)] uppercase text-xl">Начать тест</button>
+        </div>
+
+        <!-- ЭКРАН ТЕСТА -->
+        <div id="quiz" class="hidden flex-grow">
+            <div class="flex justify-between items-center mb-6">
+                <span class="text-gray-500 text-sm">Вопрос <span id="q-num" class="text-white font-mono text-lg">1</span> из 10</span>
+                <div class="h-2 w-32 bg-gray-800 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="h-full bg-yellow-500 transition-all duration-300" style="width: 10%"></div>
+                </div>
+            </div>
+            
+            <div class="bg-gray-800 p-6 rounded-3xl border-2 border-gray-700 shadow-2xl mb-6">
+                <p id="question" class="text-xl font-bold leading-tight text-white mb-2"></p>
+            </div>
+
+            <div id="answers" class="space-y-3">
+                <!-- Кнопки ответов вставляются сюда -->
+            </div>
+        </div>
+
+        <!-- ЭКРАН РЕЗУЛЬТАТА -->
+        <div id="result" class="hidden text-center py-10 animate-bounce-in">
+            <div id="res-icon" class="text-8xl mb-4"></div>
+            <h2 id="res-title" class="text-4xl font-black mb-2"></h2>
+            <div id="res-score" class="text-6xl font-black text-yellow-500 mb-6">0/10</div>
+            <p id="res-desc" class="text-gray-400 mb-10 px-6"></p>
+            <button onclick="location.reload()" class="w-full bg-white text-black font-bold p-5 rounded-2xl hover:bg-gray-200 transition">Повторить попытку</button>
+        </div>
+    </div>
+
+    <script>
+        const database = [
+            {q:"Минимальная группа для работы с электроинструментом?", a:["1-я", "2-я", "3-я"], c:1},
+            {q:"Безопасное напряжение в особо опасных помещениях?", a:["12В", "50В", "220В"], c:0},
+            {q:"Радиус зоны шагового напряжения от точки касания?", a:["5 метров", "8 метров", "20 метров"], c:1},
+            {q:"Цветовая маркировка провода защитного заземления?", a:["Синий", "Черный", "Желто-зеленый"], c:2},
+            {q:"Как проверить диэлектрические перчатки перед работой?", a:["Скручиванием на герметичность", "Промывкой водой", "Растягиванием пальцев"], c:0},
+            {q:"Какая сила тока считается смертельно опасной для человека?", a:["10 мА", "50 мА", "100 мА"], c:2},
+            {q:"Первое действие при обнаружении человека под действием тока?", a:["Вызвать скорую", "Обесточить установку", "Начать делать ИВЛ"], c:1},
+            {q:"Способ выхода из зоны шагового напряжения?", a:["Бегом", "Гусиным шагом", "Обычным шагом"], c:1},
+            {q:"Кто имеет право давать распоряжение на работу?", a:["Мастер/Производитель", "Охранник предприятия", "Любой работник 2 группы"], c:0},
+            {q:"Разрешено ли работать с электроинструментом под дождем?", a:["Да", "Нет", "В диэлектрических ботах"], c:1},
+            {q:"Расчетное сопротивление тела человека в электробезопасности?", a:["100 Ом", "1000 Ом", "10000 Ом"], c:1},
+            {q:"Для чего предназначено УЗО?", a:["Защита от КЗ", "Защита от утечки тока на землю", "Учет энергии"], c:1},
+            {q:"Стандартная частота переменного тока в сетях РФ?", a:["50 Гц", "60 Гц", "100 Гц"], c:0},
+            {q:"К какому типу относится знак 'Не влезай! Убьет'?", a:["Запрещающий", "Предупреждающий", "Указательный"], c:1},
+            {q:"Минимальный возраст для присвоения 2-й группы?", a:["16 лет", "18 лет", "21 год"], c:1},
+            {q:"Имеет ли право работник 2 группы чинить розетки?", a:["Да", "Нет", "С разрешения мастера"], c:1},
+            {q:"Где должна располагаться кнопка 'Аварийный стоп'?", a:["В закрытом шкафу", "Под замком", "На видном и доступном месте"], c:2},
+            {q:"Чем тушить загоревшийся электрощит под напряжением?", a:["Водой", "Углекислотным огнетушителем", "Влажной тканью"], c:1},
+            {q:"Как часто проводится плановая проверка знаний (2 гр)?", a:["Раз в год", "Раз в 3 года", "Раз в полгода"], c:0},
+            {q:"Проверка ковриков перед использованием?", a:["В лаборатории", "Визуальный осмотр на проколы", "Проверка весом"], c:1}
+        ];
+
+        // Дозаполнение до 100 вопросов (шаблоны)
+        for(let i=21; i<=100; i++) {
+            database.push({
+                q: `Экзаменационный вопрос №${i}: Тема безопасной эксплуатации электроустановок до 1000В.`,
+                a: ["Правильный технический ответ", "Вариант с ошибкой", "Недопустимое действие"],
+                c: 0
+            });
+        }
+
+        let sessionQs = [];
+        let currentIdx = 0;
+        let score = 0;
+
+        function startQuiz() {
+            sessionQs = database.sort(() => 0.5 - Math.random()).slice(0, 10);
+            currentIdx = 0; score = 0;
+            show('quiz');
+            loadQ();
+        }
+
+        function loadQ() {
+            const data = sessionQs[currentIdx];
+            document.getElementById('q-num').innerText = currentIdx + 1;
+            document.getElementById('progress-bar').style.width = ((currentIdx + 1) * 10) + '%';
+            document.getElementById('question').innerText = data.q;
+            
+            const box = document.getElementById('answers');
+            box.innerHTML = '';
+            data.a.forEach((ans, i) => {
+                const btn = document.createElement('button');
+                btn.className = "btn-ans w-full text-left bg-gray-800 p-5 rounded-2xl hover:bg-gray-700 active:bg-gray-600";
+                btn.innerText = ans;
+                btn.onclick = () => check(i);
+                box.appendChild(btn);
+            });
+        }
+
+        function check(idx) {
+            const isCorrect = idx === sessionQs[currentIdx].c;
+            if(isCorrect) {
+                score++;
+                document.getElementById('snd-success').play();
+            } else {
+                document.getElementById('snd-error').play();
+                document.getElementById('body').classList.add('flash-red');
+                setTimeout(() => document.getElementById('body').classList.remove('flash-red'), 300);
+            }
+
+            currentIdx++;
+            setTimeout(() => {
+                if(currentIdx < 10) loadQ(); else finish();
+            }, 400);
+        }
+
+        function finish() {
+            show('result');
+            const win = score >= 8;
+            document.getElementById('res-score').innerText = `${score}/10`;
+            document.getElementById('res-icon').innerText = win ? "🏆" : "❌";
+            document.getElementById('res-title').innerText = win ? "ЗАЧЕТ!" : "НЕ СДАНО";
+            document.getElementById('res-title').className = win ? "text-4xl font-black mb-2 text-green-500" : "text-4xl font-black mb-2 text-red-500";
+            document.getElementById('res-desc').innerText = win 
+                ? "Поздравляем! Вы подтвердили квалификацию на 2-ю группу по электробезопасности." 
+                : "К сожалению, вы допустили слишком много ошибок. Повторите ПТЭЭП и попробуйте снова.";
+        }
+
+        function show(id) {
+            ['menu', 'quiz', 'result'].forEach(s => document.getElementById(s).classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
