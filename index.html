@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тестирование ГПК: Электробезопасность</title>
+    <title>Экзамен ГПК: 30 билетов ЭБ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com" rel="stylesheet">
     <style>
@@ -30,27 +30,22 @@
             <h1 class="text-lg font-extrabold gpk-text-blue uppercase leading-tight">Глазовский политехнический колледж</h1>
         </header>
 
-        <!-- AUTH -->
         <div id="auth" class="flex-grow flex flex-col justify-center">
             <div class="card-gpk p-8 space-y-6">
-                <h2 class="text-xl font-bold text-center text-gray-800 uppercase italic">Экзаменационная аттестация</h2>
+                <h2 class="text-xl font-bold text-center text-gray-800 uppercase italic text-sm">Экзаменационная аттестация (2 группа)</h2>
                 <div class="space-y-4">
                     <input type="text" id="student-name" class="w-full p-4 border-2 rounded-xl focus:border-blue-600 outline-none" placeholder="Фамилия Имя Отчество">
-                    <input type="text" id="student-group" class="w-full p-4 border-2 rounded-xl focus:border-blue-600 outline-none" placeholder="Группа (например: Э-21)">
+                    <input type="text" id="student-group" class="w-full p-4 border-2 rounded-xl focus:border-blue-600 outline-none" placeholder="Группа">
                 </div>
-                <button onclick="startApp()" class="w-full gpk-blue text-white font-bold py-5 rounded-xl shadow-lg hover:opacity-90 transform active:scale-95 transition uppercase tracking-tight">
-                    Сгенерировать билет
-                </button>
+                <button onclick="startApp()" class="w-full gpk-blue text-white font-bold py-5 rounded-xl shadow-lg hover:opacity-90 transform active:scale-95 transition uppercase tracking-tight">Сгенерировать билет</button>
             </div>
-            <p class="text-center text-[10px] text-gray-400 mt-6 uppercase tracking-widest italic">БПОУ УР «ГПК» • 30 билетов • 2026</p>
         </div>
 
-        <!-- QUIZ -->
         <div id="quiz" class="hidden flex-grow space-y-4">
             <div class="flex justify-between items-end px-1">
                 <div>
-                    <p id="display-info" class="text-[10px] font-bold text-gray-400 italic mb-1 uppercase tracking-tight"></p>
-                    <span id="ticket-num" class="text-xs font-bold text-blue-600 uppercase tracking-widest">Билет №</span>
+                    <p id="display-info" class="text-[10px] font-bold text-gray-400 italic mb-1 uppercase"></p>
+                    <span id="ticket-num" class="text-xs font-bold text-blue-600 uppercase tracking-widest font-mono">Билет №</span>
                 </div>
                 <span class="text-xs font-bold text-gray-400 uppercase text-right">Вопрос<br><span id="progress-text" class="text-blue-600 text-lg">1/10</span></span>
             </div>
@@ -63,18 +58,16 @@
             <div id="ans-box" class="pb-8"></div>
         </div>
 
-        <!-- RESULT -->
         <div id="result" class="hidden text-center py-6">
             <div class="card-gpk p-8 border-t-8 shadow-2xl" id="res-border">
                 <div id="res-icon" class="text-6xl mb-4"></div>
-                <h2 id="res-status" class="text-3xl font-black mb-2 uppercase italic tracking-tighter"></h2>
+                <h2 id="res-status" class="text-3xl font-black mb-2 uppercase italic tracking-tighter text-gray-800"></h2>
                 <div id="res-score" class="text-7xl font-black gpk-text-blue mb-4 tracking-tighter">0/10</div>
-                
-                <div class="border-t border-b border-gray-100 py-6 text-left space-y-3 mb-6">
+                <div class="border-t border-b border-gray-100 py-6 text-left space-y-3 mb-6 text-gray-800 text-xs">
                     <div>
-                        <p class="text-[10px] text-gray-400 uppercase font-bold">Экзаменуемый:</p>
-                        <p id="final-name" class="font-bold text-gray-900 text-lg leading-tight"></p>
-                        <p id="final-group" class="text-gray-600 font-semibold text-sm"></p>
+                        <p class="text-[10px] text-gray-400 uppercase font-bold">Студент:</p>
+                        <p id="final-name" class="font-bold text-gray-900 text-sm leading-tight"></p>
+                        <p id="final-group" class="text-gray-600 font-semibold"></p>
                     </div>
                     <div class="pt-4 flex justify-between items-center border-t border-gray-50 mt-2">
                         <span class="text-[9px] text-gray-300 font-mono">ID: <span id="session-id" class="font-bold text-gray-500"></span></span>
@@ -87,101 +80,95 @@
     </div>
 
     <script>
-        const tickets = [
-            { id: 1, questions: [
-                {q:"Обозначение шин при переменном трехфазном токе?", a:["A-желтый, B-зеленый, C-красный", "A-зеленый, B-желтый, C-красный", "A-красный, B-белый, C-синий"], c:0},
-                {q:"Коэффициент трансформации больше единицы. Трансформатор считается:", a:["Понижающим", "Повышающим", "Убывающим"], c:0},
-                {q:"Какие помещения относятся к электропомещениям?", a:["Доступные только для квалифицированного персонала", "Любые с напряжением выше 220 В", "Где мощность выше 10 кВт"], c:0},
-                {q:"Как часто проводится проверка знаний электротехнического персонала?", a:["Не реже одного раза в год", "Раз в полгода", "Раз в три года"], c:0},
-                {q:"Кто является ответственным за безопасное ведение работ?", a:["Выдающий наряд, допускающий, производитель, наблюдающий, члены бригады", "Только члены бригады", "Только директор"], c:0},
-                {q:"Технические мероприятия при снятии напряжения (последовательность):", a:["Отключение, плакаты, проверка отсутствия напр., заземление", "Плакаты, отключение, заземление", "Заземление, отключение, плакаты"], c:0},
-                {q:"Что называется защитным заземлением?", a:["Заземление в целях электробезопасности", "Заземление для работы ТВ", "Любое соединение с землей"], c:0},
-                {q:"При пользовании указателем напряжения надевать перчатки нужно:", a:["В электроустановках выше 1000 В", "До 1000 В", "Везде"], c:0},
-                {q:"В каких электроустановках применяют диэлектрические галоши?", a:["В электроустановках до 1000 В", "Свыше 1000 В", "До 10000 В"], c:0},
-                {q:"Что необходимо сделать первым при поражении человека током?", a:["Произвести отключение тока", "Позвонить в скорую", "Начать реанимацию"], c:0}
-            ]},
-            { id: 2, questions: [
-                {q:"Буквенное и цветовое обозначение шин защитного заземления (PE):", a:["Буквы PE, желто-зеленые полосы", "Буквы N, голубой цвет", "Буквы PEN, белый"], c:0},
-                {q:"Напряжение светильников в помещениях с повышенной опасностью?", a:["Не выше 50 В", "Не выше 12 В", "220 В"], c:0},
-                {q:"Какие помещения относятся к влажным?", a:["Влажность выше 75%", "От 10% до 30%", "Ровно 60%"], c:0},
-                {q:"Срок повторной проверки после неудовлетворительной оценки?", a:["Не позднее 1 месяца", "Через неделю", "Через полгода"], c:0},
-                {q:"На какой срок выдается распоряжение на производство работ?", a:["На один рабочий день", "На 5 дней", "На 15 дней"], c:0},
-                {q:"Что может делать работник со II группой на ВЛ по распоряжению?", a:["Осмотры, очистка площадок, замеры", "Замена опор", "Монтаж проводов"], c:0},
-                {q:"Что понимается под напряжением шага?", a:["Напряжение между точками на расстоянии 1 метра (шага)", "Напряжение фазы", "Напряжение на корпусе"], c:0},
-                {q:"Когда перчатки являются дополнительным средством защиты?", a:["В электроустановках свыше 1000 В", "До 1000 В", "Никогда"], c:0},
-                {q:"Фон знака 'Осторожно! Напряжение' на бетонной опоре ВЛ:", a:["Цвет поверхности бетона", "Желтый", "Белый"], c:0},
-                {q:"Нужен ли врач человеку под током, если он 'в норме'?", a:["Обязательно в любом случае", "Нет", "По желанию"], c:0}
-            ]},
-            { id: 3, questions: [
-                {q:"Напряжение для переносных электроприемников переменного тока?", a:["Не выше 380/220 В", "Не выше 110 В", "Не выше 42 В"], c:0},
-                {q:"Типы двигателей по среде:", a:["Открытые, закрытые, защищенные, взрывозащищенные", "Только открытые", "Только защищенные"], c:0},
-                {q:"Чем должны быть укомплектованы электроустановки?", a:["СИЗ, средства пожаротушения, инструмент, аптечка", "Только инструментом", "Только аптечкой"], c:0},
-                {q:"Когда проводится внеочередная проверка знаний?", a:["При вводе новых норм или перерыве в работе более 6 мес.", "Раз в год", "Раз в 3 года"], c:0},
-                {q:"На какой срок выдается наряд на производство работ?", a:["Не более 15 календарных дней", "На один день", "На месяц"], c:0},
-                {q:"У кого должны храниться ключи от электроустановок?", a:["У оперативного персонала", "У директора", "У каждого работника"], c:0},
-                {q:"Периодичность осмотров заземляющих устройств со вскрытием грунта?", a:["Не реже одного раза в 12 лет", "Раз в год", "Раз в 3 года"], c:0},
-                {q:"Основные изолирующие средства до 1000 В:", a:["Штанги, клещи, указатели напр., перчатки, инструмент", "Только перчатки", "Галоши"], c:0},
-                {q:"Как определить, что электрозащитные средства пригодны?", a:["По штампу (дате испытания)", "По внешнему виду", "На ощупь"], c:0},
-                {q:"Специфическое действие тока на организм:", a:["Термическое, механическое, электролитическое", "Только ожог", "Только судороги"], c:0}
-            ]}
-            // Здесь в коде прописаны все 30 билетов аналогичным образом...
+        const allQuestions = [
+            {q:"Какая периодичность проверки знаний персонала, обслуживающего электроустановки?", a:["Не реже 1 раза в год", "Раз в полгода", "Раз в 3 года"], c:0},
+            {q:"Минимальное количество членов комиссии по проверке знаний?", a:["3 человека", "5 человек", "2 человека"], c:0},
+            {q:"Какое напряжение считается безопасным в особо опасных помещениях?", a:["12 В", "50 В", "110 В"], c:0},
+            {q:"Кто имеет право проводить инструктаж на 1 группу ЭБ?", a:["Работник с группой не ниже 3", "Мастер цеха", "Студент 4 курса"], c:0},
+            {q:"Цвет жилы защитного заземления (PE)?", a:["Желто-зеленый", "Синий", "Красный"], c:0},
+            {q:"Радиус зоны шагового напряжения?", a:["8 метров", "2 метра", "20 метров"], c:0},
+            {q:"Для чего предназначено УЗО?", a:["От утечки тока на землю", "От перегрузки", "От короткого замыкания"], c:0},
+            {q:"Как проверить перчатки на прокол?", a:["Скручиванием", "На свет", "Водой"], c:0},
+            {q:"Первое действие при ударе током?", a:["Обесточить установку", "Вызвать скорую", "Делать ИВЛ"], c:0},
+            {q:"Как выходить из зоны обрыва провода?", a:["Гусиным шагом", "Бегом", "Прыжками"], c:0},
+            {q:"Смертельный ток для человека?", a:["100 мА", "10 мА", "50 мА"], c:0},
+            {q:"Допускается ли использование контрольных ламп выше 220В?", a:["Запрещено", "Разрешено", "С разрешения мастера"], c:0},
+            {q:"На какой срок выдается распоряжение?", a:["1 рабочий день", "5 дней", "15 дней"], c:0},
+            {q:"Кто является ответственным за выдачу наряда?", a:["Лицо из АТП", "Производитель работ", "Допускающий"], c:0},
+            {q:"Периодичность проверки электроинструмента?", a:["Раз в 6 месяцев", "Раз в год", "Раз в месяц"], c:0},
+            {q:"Минимальный возраст для 2 группы?", a:["18 лет", "16 лет", "21 год"], c:0},
+            {q:"Можно ли работать одному в электроустановках?", a:["Нет", "Да", "С разрешения мастера"], c:1},
+            {q:"Чем тушить электрощит под напряжением?", a:["Углекислотным огнетушителем", "Водой", "Пенным огнетушителем"], c:0},
+            {q:"Где проверять пульс у пострадавшего?", a:["На сонной артерии", "На запястье", "На виске"], c:0},
+            {q:"Что такое заземление?", a:["Связь корпуса с землей", "Связь с нулем", "Изоляция пола"], c:0},
+            {q:"Срок действия наряда?", a:["15 календарных дней", "5 дней", "30 дней"], c:0},
+            {q:"Класс защиты инструмента с двойной изоляцией?", a:["II класс", "I класс", "III класс"], c:0},
+            {q:"На какой высоте работа считается верхолазной?", a:["Выше 5 метров", "Выше 2 метров", "Выше 10 метров"], c:0},
+            {q:"Допустимое время наложения жгута летом?", a:["Не более 1 часа", "2 часа", "30 минут"], c:0},
+            {q:"Какие знаки запрещают работу под напряжением?", a:["Запрещающие", "Предупреждающие", "Указательные"], c:0}
         ];
 
-        // Код автоматически генерирует билеты 4-30 из вашей базы вопросов
-        for (let i = 4; i <= 30; i++) {
-            let template = tickets[(i - 1) % 3];
-            tickets.push({ id: i, questions: JSON.parse(JSON.stringify(template.questions)).sort(() => 0.5 - Math.random()) });
+        let ticketsData = [];
+        for(let i=1; i<=30; i++) {
+            let ticketQs = [];
+            let pool = [...allQuestions];
+            for(let j=0; j<10; j++) {
+                let idx = Math.floor(Math.random() * pool.length);
+                ticketQs.push(pool.splice(idx, 1)[0]);
+            }
+            ticketsData.push({ id: i, questions: ticketQs });
         }
 
-        let testSet = [], currentIdx = 0, score = 0, student = { name: "", group: "" };
+        let currentTest = [], currentIdx = 0, score = 0, studentData = {};
 
         function startApp() {
-            const n = document.getElementById('student-name').value.trim();
-            const g = document.getElementById('student-group').value.trim();
-            if (n.length < 5 || g.length < 2) { alert("Заполните ФИО и Группу!"); return; }
-            student = { name: n, group: g };
-            const randomTicket = tickets[Math.floor(Math.random() * tickets.length)];
-            testSet = randomTicket.questions;
-            document.getElementById('ticket-num').innerText = `Билет №${randomTicket.id}`;
-            document.getElementById('display-info').innerText = `${n} | ${g}`;
+            const name = document.getElementById('student-name').value.trim();
+            const group = document.getElementById('student-group').value.trim();
+            if(name.length < 5 || group.length < 2) { alert("Заполните ФИО и группу!"); return; }
+            studentData = { name, group };
+            const ticket = ticketsData[Math.floor(Math.random() * ticketsData.length)];
+            currentTest = ticket.questions;
+            document.getElementById('ticket-num').innerText = `Билет №${ticket.id}`;
+            document.getElementById('display-info').innerText = `${name} | ${group}`;
             show('quiz');
-            renderQ();
+            render();
         }
 
-        function renderQ() {
-            const qData = testSet[currentIdx];
+        function render() {
+            const data = currentTest[currentIdx];
             document.getElementById('progress-text').innerText = `${currentIdx + 1}/10`;
             document.getElementById('bar').style.width = ((currentIdx + 1) * 10) + '%';
-            document.getElementById('q-text').innerText = qData.q;
+            document.getElementById('q-text').innerText = data.q;
             const box = document.getElementById('ans-box');
             box.innerHTML = '';
-            const answers = qData.a.map((txt, i) => ({txt, isCorrect: i === qData.c})).sort(() => 0.5 - Math.random());
-            answers.forEach(item => {
+            data.a.forEach((txt, i) => {
                 const btn = document.createElement('button');
-                btn.className = "ans-btn";
-                btn.innerText = item.txt;
-                btn.onclick = () => handle(item.isCorrect);
+                btn.className = "ans-btn shadow-sm";
+                btn.innerText = txt;
+                btn.onclick = () => {
+                    if(i === data.c) { score++; document.getElementById('snd-ok').play(); }
+                    else { 
+                        document.getElementById('snd-err').play(); 
+                        document.getElementById('body').classList.add('flash-red');
+                        setTimeout(() => document.getElementById('body').classList.remove('flash-red'), 400);
+                    }
+                    currentIdx++;
+                    if(currentIdx < 10) render(); else finish();
+                };
                 box.appendChild(btn);
             });
         }
 
-        function handle(correct) {
-            if(correct) { score++; document.getElementById('snd-ok').play(); } 
-            else { document.getElementById('snd-err').play(); document.getElementById('body').classList.add('flash-red'); setTimeout(() => document.getElementById('body').classList.remove('flash-red'), 400); }
-            currentIdx++;
-            setTimeout(() => { if(currentIdx < 10) renderQ(); else finish(); }, 400);
-        }
-
         function finish() {
             show('result');
-            const passed = score >= 8;
+            const win = score >= 8;
             document.getElementById('res-score').innerText = `${score}/10`;
-            document.getElementById('res-status').innerText = passed ? "АТТЕСТОВАН" : "НЕ СДАНО";
-            document.getElementById('res-status').className = `text-4xl font-black italic ${passed ? 'text-green-600' : 'text-red-600'}`;
-            document.getElementById('res-border').style.borderTopColor = passed ? '#16a34a' : '#dc2626';
-            document.getElementById('res-icon').innerText = passed ? "✅" : "⚠️";
-            document.getElementById('final-name').innerText = student.name;
-            document.getElementById('final-group').innerText = student.group;
+            document.getElementById('res-status').innerText = win ? "АТТЕСТОВАН" : "НЕ СДАНО";
+            document.getElementById('res-status').style.color = win ? "#16a34a" : "#dc2626";
+            document.getElementById('res-border').style.borderTopColor = win ? "#16a34a" : "#dc2626";
+            document.getElementById('res-icon').innerText = win ? "✅" : "⚠️";
+            document.getElementById('final-name').innerText = studentData.name;
+            document.getElementById('final-group').innerText = studentData.group;
             document.getElementById('session-id').innerText = Math.random().toString(36).substring(2, 8).toUpperCase();
             document.getElementById('current-date').innerText = new Date().toLocaleString();
         }
